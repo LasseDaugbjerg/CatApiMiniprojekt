@@ -11,3 +11,61 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+h1 {
+  text-align: center;
+}
+
+
+h2 {
+  text-align: center;
+}
+
+
+.input-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+
+.btn-submit {
+  display: block;
+  margin: 20px auto;
+}
+
+/* Set a fixed size for the cat pictures */
+.post-image {
+  width: 300px; /* Adjust the width as needed */
+  height: 300px; /* Make the images square */
+  object-fit: cover; /* Maintain aspect ratio */
+}
+
+/* Style the cat cards */
+.post-card {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 10px;
+  padding: 10px;
+  text-align: center;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  display: inline-block;
+}
+
+/* Center the "Delete" button within the cat card */
+.btn-delete {
+  display: block;
+  margin: 10px auto;
+}
+
+/* Clear floats for cat cards */
+.posts-container::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Add hover effect to buttons */
+.btn-delete:hover, .btn-submit:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}

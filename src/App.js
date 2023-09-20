@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
 import axios from 'axios';
 
-const API_KEY = process.env.API_KEY;
+const API_KEY = process.env.REACT_APP_API_KEY; // Access the API key from the .env file
+const BASE_URL = 'https://api.thecatapi.com/v1/images';
 
 function Button({ onClick }) {
     return (
@@ -29,7 +29,7 @@ export default function App() {
 
     const fetchCats = async () => {
         try {
-            const response = await axios.get('https://api.thecatapi.com/v1/images/search?limit=4', {
+            const response = await axios.get(`${BASE_URL}/search?limit=4`, {
                 headers: {
                     'x-api-key': API_KEY,
                 },
@@ -44,20 +44,42 @@ export default function App() {
         fetchCats();
     }, []);
 
-    const createCat = () => {
-        // Create a new cat and send it to the server
-        axios.post('/http://localhost:3001/', { title, imgUrl }).then((response) => {
-            setCats([...cats, response.data]);
+    const createCat = async () => {
+        try {
+            // Create a FormData object to send the image file
+            const formData = new FormData();
+            formData.append('file', imgUrl);
+
+            const response = await axios.post(
+                `${BASE_URL}/upload`,
+                formData,
+                {
+                    headers: {
+                        'x-api-key': API_KEY,
+                    },
+                }
+            );
+            // Assuming the response contains the newly created cat data
+            const newCat = response.data;
+            setCats((prevCats) => [newCat, ...prevCats]);
             setTitle('');
             setImgUrl('');
-        });
+        } catch (error) {
+            console.error('Error creating cat:', error);
+        }
     };
 
-    const deleteCat = (id) => {
-        // Delete a cat by ID and update the cats state
-        axios.delete(`/http://localhost:3001/${id}`).then(() => {
-            setCats(cats.filter((cat) => cat.id !== id));
-        });
+    const deleteCat = async (image_id) => {
+        try {
+            await axios.delete(`${BASE_URL}/${image_id}`, {
+                headers: {
+                    'x-api-key': API_KEY,
+                },
+            });
+            setCats((prevCats) => prevCats.filter((cat) => cat.id !== image_id));
+        } catch (error) {
+            console.error('Error deleting cat:', error);
+        }
     };
 
     return (
@@ -76,12 +98,11 @@ export default function App() {
                         />
                     </div>
                     <div className="input-container">
-                        <label htmlFor="imgUrl">Image URL</label>
+                        <label htmlFor="imgUrl">Image File</label>
                         <input
                             name="imgUrl"
-                            type="text"
-                            value={imgUrl}
-                            onChange={(e) => setImgUrl(e.target.value)}
+                            type="file" // Use type "file" for uploading images
+                            onChange={(e) => setImgUrl(e.target.files[0])}
                         />
                     </div>
                     <button type="submit" className="btn-submit" onClick={createCat}>
